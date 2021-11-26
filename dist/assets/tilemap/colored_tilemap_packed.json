@@ -1,5 +1,5 @@
 { "columns":16,
- "image":"tilemap\/colored_tilemap_packed.png",
+ "image":"..\/tiles\/colored_tilemap_packed.png",
  "imageheight":80,
  "imagewidth":128,
  "margin":0,
