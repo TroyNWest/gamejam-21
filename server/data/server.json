@@ -1,0 +1,11 @@
+{
+	"factories" : {
+		"Game\\Controllers\\ControllerFactory" : "data/controllers.json",
+		"Game\\ItemActions\\ItemActionFactory" : "data/item_actions.json",
+		"Game\\ItemFactory" : "data/items.json",
+		"Game\\Factions\\FactionFactory" : "data/factions.json",
+		"Game\\EntityFactory" : "data/entities.json"
+	},
+	
+	"map" : "data/maps/starting.json"
+}

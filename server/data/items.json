@@ -1,0 +1,34 @@
+{
+	"sword" : {
+		"name" : "Sword",
+		"damage" : 4,
+		"armor" : 0,
+		"range" : 1.5,
+		"sprite" : 71,
+		"action" : "MeleeAttack"
+	},
+	"bow" : {
+		"name" : "Bow",
+		"damage" : 2,
+		"armor" : 0,
+		"range" : 10,
+		"sprite" : 73,
+		"action" : "RangedAttack"
+	},
+	"shield" : {
+		"name" : "Shield",
+		"damage" : 0,
+		"armor" : 4,
+		"range" : 0,
+		"sprite" : 107,
+		"action" : "Nothing"
+	},
+	"potion" : {
+		"name" : "Potion",
+		"damage" : 0,
+		"armor" : 0,
+		"range" : 0,
+		"sprite" : 136,
+		"action" : "FullHeal"
+	}
+}

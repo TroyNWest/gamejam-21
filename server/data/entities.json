@@ -1,0 +1,29 @@
+{
+	"player" : {
+		"name" : "Player",
+		"sprite" : 6,
+		"speed" : 2.0,
+		"faction" : "Player",
+		"controller" : "Player",
+		"inventory" : {
+			"items" : ["sword"]
+		}
+	},
+	"arrow" : {
+		"name" : "Arrow",
+		"sprite" : 74,
+		"speed" : 5.0,
+		"faction" : "Player",
+		"controller" : "None"
+	},
+	"orc" : {
+		"name" : "Orc",
+		"sprite" : 12,
+		"speed" : 1.5,
+		"faction" : "Enemy",
+		"controller" : "AI",
+		"inventory" : {
+			"items" : ["sword"]
+		}
+	}
+}

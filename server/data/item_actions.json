@@ -1,0 +1,6 @@
+{
+	"Nothing" : "Game\\ItemActions\\DoNothingAction",
+	"MeleeAttack" : "Game\\ItemActions\\MeleeAttackAction",
+	"RangedAttack" : "Game\\ItemActions\\RangedAttackAction",
+	"FullHeal" : "Game\\ItemActions\\FullHealAction"
+}

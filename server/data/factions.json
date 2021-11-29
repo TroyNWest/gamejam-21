@@ -1,0 +1,6 @@
+{
+	"Neutral" : "Game\\Factions\\NeutralFaction",
+	"Player" : "Game\\Factions\\PlayerFaction",
+	"NPC" : "Game\\Factions\\NPCFaction",
+	"Enemy" : "Game\\Factions\\EnemyFaction"
+}

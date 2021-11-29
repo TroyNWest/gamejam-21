@@ -1,0 +1,5 @@
+{
+	"None" : "Game\\Controllers\\NoController",
+	"AI" : "Game\\Controllers\\AIController",
+	"Player" : "Game\\Controllers\\PlayerController"
+}
