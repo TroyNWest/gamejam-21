@@ -36,6 +36,6 @@ $websocketServer->run();
 
 }
 catch(\Throwable $e){
-	echo 'Exception: ' . $e->getMessage() . NL;
+	echo "Exception: {$e->getMessage()} in {$e->getFile()}:{$e->getLine()}" . NL;
 	echo $e->getTraceAsString();
 }

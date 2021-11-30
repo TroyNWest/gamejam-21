@@ -36,7 +36,9 @@ class RangedAttackAction extends ItemAction{
 			return;
 		}
 		
-		$projectile = EntityFactory::getInstance()->createProjectile($this->projectile_code, $user, $target, $item->getRange());
+		$damage = $user->getBaseDamage() + $item->getDamage() + $user->getInventory()->getBonusDamage();
+		
+		$projectile = EntityFactory::getInstance()->createProjectile($this->projectile_code, $user, $target, $damage, $item->getRange());
 		
 		CommunicationService::getInstance()->broadCast([
 			'type' => 'entity_create',

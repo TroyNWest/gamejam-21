@@ -7,6 +7,9 @@
 		"controller" : "Player",
 		"inventory" : {
 			"items" : ["sword"]
+		},
+		"events" : {
+			"death" : "DestroyOnDeath"
 		}
 	},
 	"arrow" : {
@@ -14,7 +17,10 @@
 		"sprite" : 74,
 		"speed" : 5.0,
 		"faction" : "Player",
-		"controller" : "None"
+		"controller" : "None",
+		"events" : {
+			"death" : "DestroyOnDeath"
+		}
 	},
 	"orc" : {
 		"name" : "Orc",
@@ -24,6 +30,9 @@
 		"controller" : "AI",
 		"inventory" : {
 			"items" : ["sword"]
+		},
+		"events" : {
+			"death" : ["DropLoot", "DestroyOnDeath"]
 		}
 	}
 }

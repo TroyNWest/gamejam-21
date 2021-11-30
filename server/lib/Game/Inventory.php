@@ -78,7 +78,7 @@ class Inventory{
 	public function getBonusDamage() : int {
 		$result = 0;
 		foreach ($this->items as $item){
-			$result += $item->getDamage();
+			$result += $item->getBonusDamage();
 		}
 		
 		return $result;

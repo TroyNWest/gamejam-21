@@ -9,6 +9,7 @@ use Game\Entity;
 use Game\Projectile;
 use Game\Factions\FactionFactory;
 use Game\Controllers\ControllerFactory;
+use Game\Handlers\EventHandlerFactory;
 
 use Game\ItemFactory;
 
@@ -37,6 +38,24 @@ class EntityFactory{
 		
 		if ($this->data === NULL){
 			throw new Exception('Invalid entity data');
+		}
+	}
+	
+	/**
+		Handle event creation.
+	*/
+	private function processEvents(Entity $entity, array $data){
+		foreach($data as $event_type => $codes){
+			if (is_string($codes)){
+				$handler = EventHandlerFactory::getInstance()->createEventHandler($codes);
+				$entity->registerHandler($event_type, $handler);
+			}
+			elseif (is_array($codes)){
+				foreach($codes as $code){
+					$handler = EventHandlerFactory::getInstance()->createEventHandler($code);
+					$entity->registerHandler($event_type, $handler);
+				}
+			}
 		}
 	}
 
@@ -86,25 +105,29 @@ class EntityFactory{
 			}
 		}
 		
+		if ($data['events']){
+			$this->processEvents($entity, $data['events']);
+		}
+		
 		return $entity;
 	}
 	
 	/**
 		This method automatically registers the projectile with the $firer's map so it can move towards the target.
 	*/
-	public function createProjectile(string $identifier, Entity $firer, Entity $target, float $max_range = -1.0) : Projectile {
+	public function createProjectile(string $identifier, Entity $firer, Entity $target, int $damage, float $max_range = -1.0) : Projectile {
 		$data = $this->data[$identifier];
 		
 		$faction = $firer->getFaction();
 		$controller = ControllerFactory::getInstance()->createController($data['controller']);
 		
-		$projectile = new Projectile($this->next_id++, $data['name'], $data['sprite'], $faction, $controller, $max_range);
+		$projectile = new Projectile($this->next_id++, $data['name'], $data['sprite'], $faction, $controller, $firer, $max_range);
 		
 		if (isset($data['speed'])){
 			$projectile->setSpeed($data['speed']);
 		}
 		
-		$projectile->setBaseDamage($firer->getBaseDamage() + $firer->getInventory()->getBonusDamage());
+		$projectile->setBaseDamage($damage);
 		
 		$source = $firer->getPosition();
 		$projectile->setPosition($source[0] + $firer->getWidth() / 2, $source[1] + $firer->getHeight() / 2);
@@ -112,8 +135,11 @@ class EntityFactory{
 		$firer->getMap()->addEntity($projectile);
 		
 		$target_position = $target->getPosition();
-		
 		$projectile->move($target_position[0] + $target->getWidth() / 2, $target_position[1] + $target->getWidth() / 2);
+		
+		if ($data['events']){
+			$this->processEvents($projectile, $data['events']);
+		}
 		
 		return $projectile;
 	}

@@ -55,6 +55,10 @@ class ItemFactory{
 			$item->setRange($data['range']);
 		}
 		
+		if ($data['bonus_damage']){
+			$item->setBonusDamage($data['bonus_damage']);
+		}
+		
 		return $item;
 	}
 }

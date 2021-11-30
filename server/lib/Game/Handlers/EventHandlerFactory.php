@@ -1,25 +1,25 @@
 <?php
 /**
-	Helper to create controllers.
+	Helper to create event handlers.
 */
 
-namespace Game\Controllers;
+namespace Game\Handlers;
 
-use Game\Controllers\Controller;
+use Game\Handlers\EventHandler;
 
-class ControllerFactory{
+class EventHandlerFactory{
 	
 	protected array $data = [];
 	
 	private static $instance = null;
 	
-	public static function getInstance(?string $data_path = null) : ControllerFactory {
+	public static function getInstance(?string $data_path = null) : EventHandlerFactory {
 		if (self::$instance == null){
 			if (!$data_path){
 				throw new Exception('First instance call requires a data path');
 			}
 			
-			self::$instance = new ControllerFactory($data_path);
+			self::$instance = new EventHandlerFactory($data_path);
 		}
 		
 		return self::$instance;
@@ -29,16 +29,16 @@ class ControllerFactory{
 		$this->data = json_decode(file_get_contents($data_path), true);
 		
 		if ($this->data === NULL){
-			throw new Exception('Invalid controller data');
+			throw new Exception('Invalid event handler data');
 		}
 	}
 
 	/**
 		Create a Controller.
 	*/
-	public function createController(string $identifier, string $player_id = '') : Controller {
+	public function createEventHandler(string $identifier) : EventHandler {
 		$data = $this->data[$identifier];
 		
-		return new $data($player_id);
+		return new $data();
 	}
 }

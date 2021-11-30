@@ -16,10 +16,11 @@ class Projectile extends Entity {
 	protected float $max_range = -1.0;
 	protected float $start_x = 0.0;
 	protected float $start_y = 0.0;
+	protected Entity $firer;
 	
-	public function __construct(int $id, string $name, int $sprite_code, Faction $faction, Controller $controller, float $max_range = -1.0){
+	public function __construct(int $id, string $name, int $sprite_code, Faction $faction, Controller $controller, Entity $firer, float $max_range = -1.0){
 		parent::__construct($id, $name, $sprite_code, $faction, $controller);
-		
+		$this->firer = $firer;
 		$this->max_range = $max_range;
 	}
 	
@@ -39,11 +40,12 @@ class Projectile extends Entity {
 		
 		// Check if we're out of range
 		if ($this->max_range > 0 && $this->map->distance($this->start_x, $this->start_y, $this->x, $this->y) > $this->max_range){
-			$this->map->removeEntity($this);
+			$this->fireEvent('death');
+			/* $this->map->removeEntity($this);
 			CommunicationService::getInstance()->broadCast([
 				'type' => 'entity_destroy',
 				'id' => $this->id
-			]);
+			]); */
 			return;
 		}
 		
@@ -56,11 +58,12 @@ class Projectile extends Entity {
 			$total_damage = $this->base_damage - ($total_armor / 2);
 			
 			if ($total_damage < 0){
-				$this->map->removeEntity($this);
+				$this->fireEvent('death');
+				/* $this->map->removeEntity($this);
 				CommunicationService::getInstance()->broadCast([
 					'type' => 'entity_destroy',
 					'id' => $this->id
-				]);
+				]); */
 				return;
 			}
 			
@@ -72,28 +75,31 @@ class Projectile extends Entity {
 			$target->setCurrentHP($current);
 			
 			if ($current <= 0){
-				$target->getMap()->removeEntity($target);
+				$this->firer->clearTarget();
+				/* $target->getMap()->removeEntity($target);
 				CommunicationService::getInstance()->broadCast([
 					'type' => 'entity_destroy',
 					'id' => $target->getId()
-				]);
+				]); */
 			}
 			
-			$this->map->removeEntity($this);
+			$this->fireEvent('death');
+			/* $this->map->removeEntity($this);
 			CommunicationService::getInstance()->broadCast([
 				'type' => 'entity_destroy',
 				'id' => $this->id
-			]);
+			]); */
 			return;
 		}
 		
 		// If we reached our destination then remove us as impacted
 		if ($this->path->size() <= 0){
-			$this->map->removeEntity($this);
+			$this->fireEvent('death');
+			/* $this->map->removeEntity($this);
 			CommunicationService::getInstance()->broadCast([
 				'type' => 'entity_destroy',
 				'id' => $this->id
-			]);
+			]); */
 		}
 	}
 	

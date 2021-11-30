@@ -17,6 +17,7 @@ class Item{
 	protected int $sprite_code = 0;
 	
 	protected int $damage = 0;
+	protected int $bonus_damage = 0;
 	
 	protected int $armor = 0;
 	
@@ -45,6 +46,14 @@ class Item{
 	
 	public function setDamage(int $damage) : void {
 		$this->damage = $damage;
+	}
+	
+	public function setBonusDamage(int $bonus_damage) : void {
+		$this->bonus_damage = $bonus_damage;
+	}
+	
+	public function getBonusDamage() : int {
+		return $this->bonus_damage;
 	}
 	
 	public function getDamage() : int {

@@ -1,0 +1,4 @@
+{
+	"DestroyOnDeath" : "Game\\Handlers\\DestroyOnDeathEventHandler",
+	"DropLoot" : "Game\\Handlers\\DropLootEventHandler"
+}

@@ -1,6 +1,18 @@
 <?php
 /**
 	Represent any object that can exist in the world that's interactable or will change.
+	
+	Events:
+		attack			- Fires when a new attack target is assigned.
+		attack_end		- Fires when the attack target is cleared.
+		punch			- Fires when we punch a target.
+		item_added		- Fires when a new item is added.
+		item_removed	- Fires when an item is removed.
+		death			- Fires when Current HP is set to 0.
+		damaged			- Fires when Current HP is lowered. Does not fire when death is triggered.
+		healed			- Fires when Current HP is raised.
+		move			- Fires when a movement is issued.
+		stop			- Fires when movement is cancelled.
 */
 
 namespace Game;
@@ -11,8 +23,9 @@ use Game\Factions\Faction;
 use Game\Controllers\Controller;
 use Game\Map;
 use Game\CommunicationService;
+use Game\EventEmitter;
 
-class Entity{
+class Entity extends EventEmitter {
 	
 	// Id
 	protected int $id = 0;
@@ -83,7 +96,8 @@ class Entity{
 	public function setPosition(float $x, float $y) : void {
 		$this->x = $x;
 		$this->y = $y;
-		$this->path->clear();
+		
+		$this->stop();
 	}
 	
 	public function getPosition() : array {
@@ -151,13 +165,26 @@ class Entity{
 	}
 	
 	public function setCurrentHP(int $current_hp) : void {
-		$this->current_hp = $current_hp;
+		// Notify of HP change
 		CommunicationService::getInstance()->broadCast([
 			'type' => 'entity_update',
 			'id' => $this->id,
-			'current_hp' => $this->current_hp,
+			'current_hp' => $current_hp,
 			'max_hp' => $this->max_hp
 		]);
+		
+		// Fire on death when we hit 0 the first time.
+		if ($current_hp == 0 && $this->current_hp != $current_hp){
+			$this->fireEvent('death');
+		}
+		elseif ($current_hp < $this->current_hp){
+			$this->fireEvent('damaged', ['damage' => $this->current_hp - $current_hp]);
+		}
+		elseif ($current_hp > $this->current_hp){
+			$this->fireEvent('healed', ['heal' => $current_hp - $this->current_hp]);
+		}
+		
+		$this->current_hp = $current_hp;
 	}
 	
 	public function getCurrentHP() : int {
@@ -195,6 +222,11 @@ class Entity{
 		$this->path->clear();
 		$this->path->addPoint($target[0], $target[1]);
 		
+		$this->fireEvent('move', [
+			'original_destination' => [$x, $y],
+			'final_destination' => $target
+		]);
+		
 		CommunicationService::getInstance()->broadCast([
 			'type' => 'move',
 			'id' => $this->id,
@@ -204,8 +236,10 @@ class Entity{
 		]);
 	}
 	
-	public function stop() : void{
+	public function stop() : void {
 		$this->path->clear();
+		
+		$this->fireEvent('stop');
 		
 		CommunicationService::getInstance()->broadCast([
 			'type' => 'move',
@@ -217,10 +251,14 @@ class Entity{
 	}
 	
 	public function addItem(Item $item) : bool{
+		$this->fireEvent('item_added', ['item' => $item]);
+		
 		return $this->inventory->addItem($item);
 	}
 	
 	public function removeItem(Item $item) : void {
+		$this->fireEvent('item_removed', ['item' => $item]);
+		
 		$this->inventory->removeItem($item);
 	}
 	
@@ -228,10 +266,14 @@ class Entity{
 		Used by the AI to signal that a target should be attacked.
 	*/
 	public function attack(Entity $target) : void{
+		$this->fireEvent('attack', ['target' => $target]);
+		
 		$this->target = $target; // We will calculate what to do with this
 	}
 	
 	public function clearTarget() : void {
+		$this->fireEvent('attack_end');
+		
 		$this->target = null;
 	}
 	
@@ -246,7 +288,7 @@ class Entity{
 	/**
 		Allow an unarmed attack.
 	*/
-	public function punch(Entity $target) : void {
+	public function punch(Entity $target) : void {		
 		$current = $target->getCurrentHP();
 		$total_armor = $target->getBaseArmor() + $target->getInventory()->getBonusArmor();
 		
@@ -255,6 +297,8 @@ class Entity{
 		if ($total_damage < 0){
 			return;
 		}
+		
+		$this->fireEvent('punch', ['target' => $target, 'total_damage' => $total_damage, 'total_armor' => $total_armor]);
 		
 		CommunicationService::getInstance()->broadCast([
 			'type' => 'swing',
@@ -271,11 +315,13 @@ class Entity{
 		$target->setCurrentHP($current);
 		
 		if ($current <= 0){
-			$target->getMap()->removeEntity($target);
+			/* $target->getMap()->removeEntity($target);
 			CommunicationService::getInstance()->broadCast([
 				'type' => 'entity_destroy',
 				'id' => $target->getId()
-			]);
+			]); */
+			
+			$this->clearTarget();
 		}
 	}
 	

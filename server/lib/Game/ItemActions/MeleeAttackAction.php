@@ -29,9 +29,9 @@ class MeleeAttackAction extends ItemAction{
 		$current = $target->getCurrentHP();
 		$total_armor = $target->getBaseArmor() + $target->getInventory()->getBonusArmor();
 		
-		$total_damage = $user->getBaseDamage() + $user->getInventory()->getBonusDamage() - ($total_armor / 2);
+		$total_damage = $user->getBaseDamage() + $item->getDamage() + $user->getInventory()->getBonusDamage() - ($total_armor / 2);
 		
-		if ($total_damage < 0){
+		if ($total_damage <= 0){
 			return;
 		}
 		
@@ -50,11 +50,11 @@ class MeleeAttackAction extends ItemAction{
 		$target->setCurrentHP($current);
 		
 		if ($current <= 0){
-			$target->getMap()->removeEntity($target);
+			/* $target->getMap()->removeEntity($target);
 			CommunicationService::getInstance()->broadCast([
 				'type' => 'entity_destroy',
 				'id' => $target->getId()
-			]);
+			]); */
 			
 			$user->clearTarget();
 		}
