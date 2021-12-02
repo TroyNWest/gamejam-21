@@ -5,6 +5,9 @@
 
 namespace Game\ItemActions;
 
+use Game\Item;
+use Game\Entity;
+
 class DoNothingAction extends ItemAction{
 	
 	/**

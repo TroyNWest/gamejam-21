@@ -1,31 +1,30 @@
 <?php
 /**
-	Used by player entities. Essentially neutral since the player will issue their own commands.
+	Totally Neutral, never attacks.
 */
 
 namespace Game\Factions;
 
 use Game\Factions\Faction;
 
-class EnemyFaction extends Faction{
+class LootFaction extends Faction{
 	
 	public function __construct(){
-		$this->setName('Enemy');
+		$this->setName('Loot');
 	}
 	
 	/**
 		Determine if this faction will attack a member of the compared faction.
-		Enemy will not attack itself or Loot.
 	*/
 	public function willAttack(Faction $compare) : bool {
-		return $compare->getName() != 'Enemy' && $compare->getName() != 'Loot';
+		return false;
 	}
 	
 	/**
 		Determine if this faction will defend itself if attacked by a member of the compared faction.
 	*/
 	public function engageIfAttacked(Faction $compare) : bool {
-		return true;
+		return false;
 	}
 	
 }

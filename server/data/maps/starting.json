@@ -594,5 +594,18 @@
  "tilewidth":8,
  "type":"map",
  "version":"1.6",
- "width":50
+ "width":50,
+ "spawnpoint" : [4, 4],
+ "entities" : [
+	{
+		"code" : "chest",
+		"x" : 20,
+		"y" : 5
+	},
+	{
+		"code" : "orc",
+		"x" : 22,
+		"y" : 6
+	}
+ ]
 }

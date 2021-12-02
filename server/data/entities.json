@@ -29,10 +29,35 @@
 		"faction" : "Enemy",
 		"controller" : "AI",
 		"inventory" : {
-			"items" : ["sword"]
+			"items" : ["club"]
 		},
 		"events" : {
 			"death" : ["DropLoot", "DestroyOnDeath"]
+		}
+	}, 
+	"loot" : {
+		"name" : "Loot",
+		"sprite" : 0,
+		"speed" : 0,
+		"faction" : "Loot",
+		"controller" : "None",
+		"interaction" : "TransferInventory",
+		"events" : {
+			"death" : "DestroyOnDeath"
+		}
+	},
+	"chest" : {
+		"name" : "Chest",
+		"sprite" : 58,
+		"speed" : 0,
+		"faction" : "Loot",
+		"controller" : "None",
+		"interaction" : "TransferInventory",
+		"inventory" : {
+			"items" : ["ring", "shield"]
+		},
+		"events" : {
+			"death" : "DestroyOnDeath"
 		}
 	}
 }

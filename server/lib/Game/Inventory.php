@@ -44,6 +44,13 @@ class Inventory{
 	}
 	
 	/**
+		Return the array directly so we can process items in bulk.
+	*/
+	public function getItems() : array {
+		return $this->items;
+	}
+	
+	/**
 		Find an item by Id in this inventory or NULL if not found.
 	*/
 	public function findItemById(int $id) : ?Item {

@@ -7,13 +7,29 @@ namespace Game;
 
 use Game\Entity;
 use Game\Factions\Faction;
+use Game\EntityFactory;
 
 class Map{
 	protected array $data = [];
 	private array $entities = [];
+	private array $spawn_point = [];
 	
 	public function __construct(string $data_path){
 		$this->data = json_decode(file_get_contents($data_path), true);
+		
+		// Set a spawn point if specified
+		if ($this->data['spawnpoint']){
+			$this->spawn_point = $this->data['spawnpoint'];
+		}
+		
+		// Create starting entities
+		if (is_array($this->data['entities'])){
+			foreach($this->data['entities'] as $def){
+				$entity = EntityFactory::getInstance()->createEntity($def['code']);
+				$entity->setPosition(floatval($def['x']), floatval($def['y']));
+				$this->addEntity($entity);
+			}
+		}
 	}
 	
 	public function addEntity(Entity $entity){
@@ -232,6 +248,14 @@ class Map{
 		$ix = $line1[0] + $t * ($line1[2] - $line1[0]);
 		$iy = $line1[1] + $t * ($line1[3] - $line1[1]);
 		return true;
+	}
+	
+	public function getSpawnPoint() : array {
+		if (count($this->spawn_point)){
+			return $this->spawn_point;
+		}
+		
+		return [rand(0, $this->data['width']), rand(0, $this->data['height'])];
 	}
 	
 	public function tick(){

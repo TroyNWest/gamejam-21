@@ -37,6 +37,15 @@ class PlayerController extends Controller{
 				$item->useOnSelf($me);
 			}
 		}
+		elseif ($packet['type'] == 'interact'){
+			$target = $me->getMap()->findEntityById(intval($packet['target_id']));
+			
+			if (!$target){
+				return;
+			}
+			
+			$target->interact($me);
+		}
 		// Why do I even have to do this?
 		elseif ($packet['type'] == 'poop'){
 			CommunicationService::getInstance()->sendMessageToEntityOwner($me, [

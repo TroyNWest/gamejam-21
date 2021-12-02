@@ -24,6 +24,7 @@ use Game\Controllers\Controller;
 use Game\Map;
 use Game\CommunicationService;
 use Game\EventEmitter;
+use Game\EntityInteractions\EntityInteraction; 
 
 class Entity extends EventEmitter {
 	
@@ -60,12 +61,16 @@ class Entity extends EventEmitter {
 	
 	// Appearance
 	protected int $sprite_code = 0;
+	protected string $renderer_hint = '';
 	
 	// Inventory
 	protected Inventory $inventory;
 	
 	// Controller
 	protected Controller $controller;
+	
+	// Interactions
+	protected ?EntityInteraction $interaction = null;
 	
 	// Time elapsed
 	protected float $last_ticks = 0;
@@ -199,6 +204,10 @@ class Entity extends EventEmitter {
 		return $this->max_hp;
 	}
 	
+	public function setRendererHint(string $hint) : void {
+		$this->renderer_hint = $hint;
+	}
+	
 	// Calculate linear distance between two entities.
 	public function distanceTo(Entity $target) : float {
 		$position = $target->getPosition();
@@ -326,6 +335,22 @@ class Entity extends EventEmitter {
 	}
 	
 	/**
+		Add an interaction handler.
+	*/
+	public function setInteraction(?EntityInteraction $interaction) : void {
+		$this->interaction = $interaction;
+	}
+	
+	/**
+		Trigger an interaction if one is present.
+	*/
+	public function interact(Entity $interactor) : void {
+		if ($this->interaction){
+			$this->interaction->interact($this, $interactor);
+		}
+	}
+	
+	/**
 		Allow this entity to process tasks assigned to it.
 	*/
 	public function tick() : void {
@@ -370,7 +395,7 @@ class Entity extends EventEmitter {
 	}
 	
 	public function serialize() : array {
-		return [
+		$result = [
 			'id' => $this->id,
 			'name' => $this->name,
 			'position' => [ $this->x, $this->y ],
@@ -381,5 +406,11 @@ class Entity extends EventEmitter {
 			'sprite' => $this->sprite_code,
 			'inventory' => $this->inventory->serialize()
 		];
+		
+		if ($this->renderer_hint){
+			$result['hint'] = $this->renderer_hint;
+		}
+		
+		return $result;
 	}
 }

@@ -2,5 +2,6 @@
 	"Neutral" : "Game\\Factions\\NeutralFaction",
 	"Player" : "Game\\Factions\\PlayerFaction",
 	"NPC" : "Game\\Factions\\NPCFaction",
-	"Enemy" : "Game\\Factions\\EnemyFaction"
+	"Enemy" : "Game\\Factions\\EnemyFaction",
+	"Loot" : "Game\\Factions\\LootFaction"
 }

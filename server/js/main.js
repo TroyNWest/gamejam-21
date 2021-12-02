@@ -193,13 +193,21 @@ function bake_frame(context){
 		}
 		
 		// Render entities
-		var x,y,rotation;
+		var x,y,width,height,rotation;
 		for(var id in entities){
 			if (!entities.hasOwnProperty(id)) continue;
 			entity = entities[id];
 			bounds = getSpriteOffset(entity.sprite);
 			x = parseInt(entity.position[0] * tile_scale);
 			y =  parseInt(entity.position[1] * tile_scale);
+			width = tile_scale;
+			height = tile_scale;
+			
+			if (entity.hint == 'loot'){
+				width /= 2;
+				height /= 2;
+				y += height * Math.sin(now / 1000);
+			}
 			
 			if (typeof entity.rotate == 'number' && entity.move){
 				rotation = calculate_rotation(entity.rotate, entity.position, entity.move);
@@ -210,7 +218,7 @@ function bake_frame(context){
 				context.translate(x - tile_scale / 2, y - tile_scale);
 			}
 			
-			context.drawImage(tilemap, bounds[0], bounds[1], 8, 8, 0, 0, tile_scale, tile_scale);
+			context.drawImage(tilemap, bounds[0], bounds[1], 8, 8, 0, 0, width, height);
 			
 			context.setTransform(1, 0, 0, 1, 0, 0); // Force transform back to identity
 			
@@ -357,17 +365,26 @@ function getJSONFile(method, url, resolve, reject) {
 /**
 	Use a mousedown event to trigger a move request.
 */
-function request_move(e){
+function handle_mouse_down(e){
 	e.preventDefault();
 	if (!socket){
 		return;
 	}
 	
-	socket.send(JSON.stringify({
-		'type' : 'move',
-		'x' : e.layerX / tile_scale,
-		'y' : e.layerY / tile_scale
-	}));
+	var target = find_entity_at_point(e.layerX, e.layerY);
+	if (target){
+		socket.send(JSON.stringify({
+			type : 'interact',
+			target_id : target.id
+		}));
+	}
+	else{
+		socket.send(JSON.stringify({
+			type : 'move',
+			x : e.layerX / tile_scale,
+			y : e.layerY / tile_scale
+		}));
+	}
 }
 
 /**
@@ -446,7 +463,7 @@ window.addEventListener('DOMContentLoaded', function(e){
 	canvas.style.height = canvas.clientWidth;
 	canvas.width = canvas.clientWidth;
 	canvas.height = canvas.clientHeight;
-	canvas.onmousedown = request_move;
+	canvas.onmousedown = handle_mouse_down;
 	
 	var context = canvas.getContext('2d');
 	context.imageSmoothingEnabled = false;

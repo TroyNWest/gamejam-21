@@ -35,6 +35,9 @@ class GameServer extends WebSocket
      */
     public function __construct(string $config_path)
     {
+		// Let the communication service know where we're at so it can service requests to send data.
+		CommunicationService::getInstance()->provide($this);
+		
         // create a log channel
         $this->log = new Logger(__CLASS__);
 		
@@ -53,9 +56,6 @@ class GameServer extends WebSocket
 		
 		// Load a starting map
 		$this->maps[] = new Map($config['map']);
-		
-		// Let the communication service know where we're at so it can service requests to send data.
-		CommunicationService::getInstance()->provide($this);
     }
 
 	/**
@@ -99,7 +99,8 @@ class GameServer extends WebSocket
 			}
 			else{
 				$player = EntityFactory::getInstance()->createEntity('player', $id);
-				$player->setPosition(rand(1, 50), rand(1, 50));
+				$spawn = $this->maps[0]->getSpawnPoint();
+				$player->setPosition($spawn[0], $spawn[1]);
 				$this->player_storage[ $packet['value'] ] = $player;
 			}
 			
@@ -230,7 +231,6 @@ class GameServer extends WebSocket
 		}
 		
 		$index = array_search($entity, $this->players, true);
-		
 		if ($index !== false){
 			$this->clients[$index]->send($msg);
 		}
@@ -240,6 +240,10 @@ class GameServer extends WebSocket
 		Send a message to all connected players.
 	*/
 	public function broadCast($msg){
+		if (!count($this->clients)){
+			return;
+		}
+		
 		if (is_array($msg)){
 			$msg = json_encode($msg);
 		}

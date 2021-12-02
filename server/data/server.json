@@ -1,5 +1,6 @@
 {
 	"factories" : {
+		"Game\\EntityInteractions\\EntityInteractionFactory" : "data/interactions.json",
 		"Game\\Handlers\\EventHandlerFactory" : "data/handlers.json",
 		"Game\\Controllers\\ControllerFactory" : "data/controllers.json",
 		"Game\\ItemActions\\ItemActionFactory" : "data/item_actions.json",

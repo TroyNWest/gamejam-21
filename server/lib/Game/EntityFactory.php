@@ -10,6 +10,7 @@ use Game\Projectile;
 use Game\Factions\FactionFactory;
 use Game\Controllers\ControllerFactory;
 use Game\Handlers\EventHandlerFactory;
+use Game\EntityInteractions\EntityInteractionFactory;
 
 use Game\ItemFactory;
 
@@ -62,13 +63,22 @@ class EntityFactory{
 	/**
 		Create an Entity.
 	*/
-	public function createEntity(string $identifier, string $player_id = '') : Entity {
+	public function createEntity(string $identifier, string $player_id = '', int $sprite_code = -1) : Entity {
 		$data = $this->data[$identifier];
+		
+		if ($sprite_code >= 0){
+			$data['sprite'] = $sprite_code;
+		}
 		
 		$faction = FactionFactory::getInstance()->createFaction($data['faction']);
 		$controller = ControllerFactory::getInstance()->createController($data['controller'], $player_id);
 		
 		$entity = new Entity($this->next_id++, $data['name'], $data['sprite'], $faction, $controller);
+		
+		if ($data['interaction']){
+			$interaction = EntityInteractionFactory::getInstance()->createEntityInteraction($data['interaction']);
+			$entity->setInteraction($interaction);
+		}
 		
 		if (isset($data['speed'])){
 			$entity->setSpeed($data['speed']);

@@ -7,6 +7,14 @@
 		"sprite" : 71,
 		"action" : "MeleeAttack"
 	},
+	"club" : {
+		"name" : "Club",
+		"damage" : 5,
+		"armor" : 0,
+		"range" : 1.0,
+		"sprite" : 59,
+		"action" : "MeleeAttack"
+	},
 	"bow" : {
 		"name" : "Bow",
 		"damage" : 2,
@@ -30,5 +38,14 @@
 		"range" : 0,
 		"sprite" : 136,
 		"action" : "FullHeal"
+	},
+	"ring" : {
+		"name" : "Ring of Damage",
+		"damage" : 0,
+		"armor" : 0,
+		"bonus" : 2,
+		"range" : 0,
+		"sprite" : 90,
+		"action" : "Nothing"
 	}
 }
